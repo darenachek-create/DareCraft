@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const header = document.getElementById("header");
+    const scrollProgress = document.getElementById("scrollProgress");
     const menuToggle = document.getElementById("menuToggle");
     const navigation = document.getElementById("navigation");
     const navLinks = Array.from(document.querySelectorAll(".nav-link"));
@@ -11,13 +12,39 @@ document.addEventListener("DOMContentLoaded", () => {
         yearEl.textContent = String(new Date().getFullYear());
     }
 
-    // Тень шапки при прокрутке
-    const updateHeaderScroll = () => {
-        if (!header) return;
-        header.classList.toggle("is-scrolled", window.scrollY > 16);
+    // Тень шапки и верхний индикатор прогресса прокрутки
+    const updateScrollUI = () => {
+        const scrollTop = window.scrollY;
+        if (header) {
+            header.classList.toggle("is-scrolled", scrollTop > 16);
+        }
+        if (scrollProgress) {
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const ratio = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+            scrollProgress.style.width = `${ratio}%`;
+        }
     };
-    window.addEventListener("scroll", updateHeaderScroll, { passive: true });
-    updateHeaderScroll();
+    window.addEventListener("scroll", updateScrollUI, { passive: true });
+    updateScrollUI();
+
+    // Плавное появление секций при прокрутке
+    const revealEls = Array.from(document.querySelectorAll(".reveal"));
+    if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("is-visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.12 }
+        );
+        revealEls.forEach((el) => observer.observe(el));
+    } else {
+        revealEls.forEach((el) => el.classList.add("is-visible"));
+    }
 
     // Мобильное меню
     const setMenuOpen = (open) => {
@@ -69,8 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("scroll", updateActiveNav, { passive: true });
     updateActiveNav();
 
-    // Живой фон (слайд-шоу с плавным переходом) в hero-блоке
-    // Поддерживает файлы "фон1" и "фон2" с любым популярным расширением (.png, .jpg, .jpeg, .webp)
+    // Живой фон в hero-блоке с ручным переключателем сцен ("фон1" и "фон2") и лёгким параллаксом
     const HERO_BACKGROUNDS = [
         {
             candidates: [
@@ -82,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "фон1.jpg",
                 "фон1.webp"
             ],
-            label: "Стройка дома на закате в DareCraft"
+            label: "Закат и стройка"
         },
         {
             candidates: [
@@ -94,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "фон2.jpg",
                 "фон2.webp"
             ],
-            label: "Ночная битва с монстрами в DareCraft"
+            label: "Ночная битва"
         }
     ];
 
@@ -119,13 +145,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const initHeroBackground = async () => {
         const heroSection = document.querySelector(".hero");
+        const sceneButtons = Array.from(document.querySelectorAll(".scene-btn"));
         if (!heroSection) return;
 
         const resolvedList = [];
-        for (const item of HERO_BACKGROUNDS) {
+        for (let i = 0; i < HERO_BACKGROUNDS.length; i++) {
+            const item = HERO_BACKGROUNDS[i];
             const validSrc = await resolveImagePath(item.candidates);
             if (validSrc) {
-                resolvedList.push({ src: validSrc, label: item.label });
+                resolvedList.push({ index: i, src: validSrc, label: item.label });
             }
         }
 
@@ -137,30 +165,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const baseSlideStyle = {
             position: "absolute",
-            inset: "0",
+            inset: "-2%",
             backgroundPosition: "center",
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
-            transition: "opacity 1.1s ease, transform 7s ease",
+            transition: "opacity 1s ease, transform 0.35s ease-out",
             pointerEvents: "none",
             zIndex: "0"
         };
 
         Object.assign(bgLayerA.style, baseSlideStyle, {
             backgroundImage: `url("${resolvedList[0].src}")`,
-            opacity: "0.34",
-            transform: "scale(1.02)"
+            opacity: "0.38",
+            transform: "scale(1.03)"
         });
 
         Object.assign(bgLayerB.style, baseSlideStyle, {
             opacity: "0",
-            transform: "scale(1.05)"
+            transform: "scale(1.03)"
         });
 
         Object.assign(bgOverlay.style, {
             position: "absolute",
             inset: "0",
-            background: "linear-gradient(180deg, rgba(17, 17, 20, 0.68) 0%, rgba(17, 17, 20, 0.84) 100%)",
+            background: "linear-gradient(180deg, rgba(17, 17, 20, 0.62) 0%, rgba(17, 17, 20, 0.84) 100%)",
             pointerEvents: "none",
             zIndex: "0"
         });
@@ -169,32 +197,73 @@ document.addEventListener("DOMContentLoaded", () => {
         heroSection.prepend(bgLayerB);
         heroSection.prepend(bgLayerA);
 
-        if (resolvedList.length < 2) return;
-
-        let currentSlide = 0;
+        let currentPos = 0;
         let showingA = true;
+        let timerId = null;
 
-        setInterval(() => {
-            currentSlide = (currentSlide + 1) % resolvedList.length;
-            const nextSrc = resolvedList[currentSlide].src;
+        const syncButtons = (sceneIndex) => {
+            sceneButtons.forEach((btn) => {
+                btn.classList.toggle("active", Number(btn.dataset.scene) === sceneIndex);
+            });
+        };
+
+        const showSlide = (pos) => {
+            if (resolvedList.length === 0) return;
+            currentPos = (pos + resolvedList.length) % resolvedList.length;
+            const slide = resolvedList[currentPos];
 
             const activeLayer = showingA ? bgLayerA : bgLayerB;
             const incomingLayer = showingA ? bgLayerB : bgLayerA;
 
-            incomingLayer.style.backgroundImage = `url("${nextSrc}")`;
-            incomingLayer.style.transform = "scale(1.06)";
-            incomingLayer.style.opacity = "0.34";
-
+            incomingLayer.style.backgroundImage = `url("${slide.src}")`;
+            incomingLayer.style.opacity = "0.38";
             activeLayer.style.opacity = "0";
-            activeLayer.style.transform = "scale(1.01)";
 
             showingA = !showingA;
-        }, 5500);
+            syncButtons(slide.index);
+        };
+
+        const startAutoplay = () => {
+            if (resolvedList.length < 2) return;
+            if (timerId) clearInterval(timerId);
+            timerId = setInterval(() => {
+                showSlide(currentPos + 1);
+            }, 6000);
+        };
+
+        sceneButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const requestedIndex = Number(btn.dataset.scene);
+                const foundPos = resolvedList.findIndex((item) => item.index === requestedIndex);
+                if (foundPos !== -1) {
+                    showSlide(foundPos);
+                    startAutoplay();
+                }
+            });
+        });
+
+        // Лёгкий параллакс от движения мыши на ПК
+        heroSection.addEventListener("mousemove", (e) => {
+            const rect = heroSection.getBoundingClientRect();
+            const offsetX = ((e.clientX - rect.left) / rect.width - 0.5) * -14;
+            const offsetY = ((e.clientY - rect.top) / rect.height - 0.5) * -14;
+            const transformValue = `scale(1.04) translate(${offsetX.toFixed(1)}px, ${offsetY.toFixed(1)}px)`;
+            bgLayerA.style.transform = transformValue;
+            bgLayerB.style.transform = transformValue;
+        });
+
+        heroSection.addEventListener("mouseleave", () => {
+            bgLayerA.style.transform = "scale(1.03)";
+            bgLayerB.style.transform = "scale(1.03)";
+        });
+
+        syncButtons(resolvedList[0].index);
+        startAutoplay();
     };
 
     initHeroBackground();
 
-    // Данные галереи с поддержкой файлов "фон1" и "фон2"
+    // Данные галереи
     const GALLERY_ITEMS = [
         {
             candidates: [
@@ -208,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ],
             category: "crafting",
             categoryLabel: "СТРОЙКА И МИР",
-            caption: "Уютный закат и стройка дома в DareCraft (фон1)"
+            caption: "Уютный закат и стройка дома в DareCraft"
         },
         {
             candidates: [
@@ -222,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ],
             category: "world",
             categoryLabel: "БИТВА С МОБАМИ",
-            caption: "Ночная битва с монстрами в DareCraft (фон2)"
+            caption: "Ночная битва с монстрами в DareCraft"
         },
         {
             candidates: [
@@ -374,12 +443,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderGallery();
 
-    // Подсказка при клике на скачивание
+    // Подсказка при скачивании
     const downloadBtn = document.getElementById("downloadBtn");
     const downloadFeedback = document.getElementById("downloadFeedback");
     downloadBtn?.addEventListener("click", () => {
         if (downloadFeedback) {
-            downloadFeedback.textContent = "Запущено скачивание DareCraft.zip. Если файл не загрузился — проверьте папку assets/downloads/DareCraft.zip.";
+            downloadFeedback.textContent = "Запущено скачивание DareCraft.zip. Распакуйте архив перед запуском.";
+        }
+    });
+
+    // Копирование шаблона баг-репорта
+    const copyBugBtn = document.getElementById("copyBugBtn");
+    const bugFeedback = document.getElementById("bugFeedback");
+    const BUG_TEMPLATE = [
+        "DareCraft — Баг-репорт",
+        "Версия сборки: 0.1",
+        "Платформа (ПК / телефон): ",
+        "Что произошло: ",
+        "Как повторить ошибку: "
+    ].join("\n");
+
+    copyBugBtn?.addEventListener("click", async () => {
+        try {
+            await navigator.clipboard.writeText(BUG_TEMPLATE);
+            if (bugFeedback) {
+                bugFeedback.textContent = "Шаблон баг-репорта скопирован в буфер обмена!";
+            }
+        } catch {
+            if (bugFeedback) {
+                bugFeedback.textContent = "Не удалось скопировать автоматически — скопируйте вручную.";
+            }
         }
     });
 });

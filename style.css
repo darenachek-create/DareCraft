@@ -1,8 +1,8 @@
 :root {
     --bg-main: #111114;
     --bg-elevated: #17171c;
-    --bg-card: #1c1c23;
-    --bg-card-hover: #22222b;
+    --bg-card: rgba(28, 28, 35, 0.86);
+    --bg-card-hover: rgba(36, 36, 45, 0.96);
     --text-main: #f4f4f6;
     --text-muted: #a1a1ad;
     --accent: #e11d48;
@@ -12,8 +12,8 @@
     --radius-sm: 8px;
     --radius-md: 14px;
     --radius-lg: 20px;
-    --shadow-card: 0 12px 30px rgba(0, 0, 0, 0.35);
-    --transition: 0.22s ease;
+    --shadow-card: 0 14px 34px rgba(0, 0, 0, 0.38);
+    --transition: 0.24s ease;
 }
 
 *,
@@ -60,6 +60,20 @@ button {
     outline-offset: 3px;
 }
 
+/* Top Scroll Progress Bar */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    z-index: 150;
+    background: linear-gradient(90deg, var(--accent), #fb7185);
+    box-shadow: 0 0 12px rgba(225, 29, 72, 0.7);
+    transition: width 0.08s linear;
+    pointer-events: none;
+}
+
 /* Header & Navigation */
 .header {
     position: sticky;
@@ -71,15 +85,15 @@ button {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    background: rgba(17, 17, 20, 0.84);
-    backdrop-filter: blur(14px);
+    background: rgba(17, 17, 20, 0.8);
+    backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-subtle);
     transition: background-color var(--transition), box-shadow var(--transition);
 }
 
 .header.is-scrolled {
     background: rgba(17, 17, 20, 0.96);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 .logo {
@@ -110,11 +124,11 @@ button {
 .navigation {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 22px;
 }
 
 .nav-link {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     color: var(--text-muted);
@@ -221,7 +235,7 @@ button {
 .hero-content {
     position: relative;
     max-width: 820px;
-    z-index: 1;
+    z-index: 2;
 }
 
 .status {
@@ -231,7 +245,8 @@ button {
     text-align: left;
     padding: 10px 16px;
     border-radius: var(--radius-md);
-    background: rgba(28, 28, 35, 0.9);
+    background: rgba(24, 24, 30, 0.82);
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(225, 29, 72, 0.35);
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.72rem;
@@ -262,6 +277,7 @@ button {
     line-height: 1.04;
     letter-spacing: -0.02em;
     margin-bottom: 20px;
+    text-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
 }
 
 .hero h1 span {
@@ -272,7 +288,7 @@ button {
     max-width: 600px;
     margin: 0 auto 30px;
     font-size: clamp(1rem, 2vw, 1.15rem);
-    color: var(--text-muted);
+    color: #d0d0da;
 }
 
 .hero-buttons {
@@ -295,7 +311,7 @@ button {
     font-size: 0.84rem;
     font-weight: 700;
     letter-spacing: 0.06em;
-    transition: transform var(--transition), background-color var(--transition), border-color var(--transition);
+    transition: transform var(--transition), background-color var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 
 .btn:hover {
@@ -305,22 +321,24 @@ button {
 .btn-red {
     background: var(--accent);
     color: #fff;
-    box-shadow: 0 10px 24px rgba(225, 29, 72, 0.28);
+    box-shadow: 0 10px 24px rgba(225, 29, 72, 0.3);
 }
 
 .btn-red:hover {
     background: var(--accent-hover);
+    box-shadow: 0 14px 28px rgba(225, 29, 72, 0.42);
 }
 
 .btn-outline {
-    border: 1px solid var(--border-subtle);
-    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(24, 24, 30, 0.72);
+    backdrop-filter: blur(8px);
     color: var(--text-main);
 }
 
 .btn-outline:hover {
-    border-color: rgba(255, 255, 255, 0.28);
-    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.34);
+    background: rgba(38, 38, 48, 0.88);
 }
 
 .hero-badges {
@@ -328,7 +346,7 @@ button {
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
-    margin-bottom: 24px;
+    margin-bottom: 18px;
 }
 
 .badge {
@@ -337,9 +355,51 @@ button {
     letter-spacing: 0.08em;
     padding: 5px 11px;
     border-radius: 999px;
-    background: var(--bg-card);
+    background: rgba(24, 24, 30, 0.78);
+    backdrop-filter: blur(8px);
     border: 1px solid var(--border-subtle);
+    color: #d4d4df;
+}
+
+.hero-switcher {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(20, 20, 26, 0.82);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-subtle);
+    margin-bottom: 20px;
+}
+
+.switcher-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
     color: var(--text-muted);
+    padding-left: 6px;
+}
+
+.scene-btn {
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all var(--transition);
+}
+
+.scene-btn:hover {
+    color: var(--text-main);
+}
+
+.scene-btn.active {
+    background: var(--accent);
+    color: #fff;
 }
 
 .hero-signature {
@@ -351,6 +411,18 @@ button {
 
 .hero-signature strong {
     color: var(--text-main);
+}
+
+/* Scroll Reveal */
+.reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Sections */
@@ -524,6 +596,7 @@ button {
     padding: 26px 22px;
     border-radius: var(--radius-md);
     background: var(--bg-card);
+    backdrop-filter: blur(8px);
     border: 1px solid var(--border-subtle);
     transition: transform var(--transition), background-color var(--transition), border-color var(--transition);
 }
@@ -531,7 +604,7 @@ button {
 .feature-card:hover {
     transform: translateY(-4px);
     background: var(--bg-card-hover);
-    border-color: rgba(225, 29, 72, 0.35);
+    border-color: rgba(225, 29, 72, 0.4);
 }
 
 .feature-number {
@@ -551,6 +624,92 @@ button {
 .feature-card p {
     color: var(--text-muted);
     font-size: 0.92rem;
+}
+
+/* Updates / Changelog */
+.updates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 22px;
+}
+
+.update-card {
+    padding: 26px 24px;
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    transition: transform var(--transition), border-color var(--transition);
+}
+
+.update-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.update-card.is-current {
+    border-color: rgba(225, 29, 72, 0.42);
+    box-shadow: 0 12px 32px rgba(225, 29, 72, 0.1);
+}
+
+.update-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.update-version {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text-main);
+}
+
+.update-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+.update-status.live {
+    background: var(--accent-soft);
+    color: #fb7185;
+    border: 1px solid rgba(225, 29, 72, 0.4);
+}
+
+.update-status.wip {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+}
+
+.update-card h3 {
+    font-size: 1.12rem;
+    margin-bottom: 12px;
+}
+
+.update-card ul {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+}
+
+.update-card li {
+    position: relative;
+    padding-left: 16px;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+}
+
+.update-card li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
 }
 
 /* Gallery */
@@ -647,7 +806,7 @@ button {
     position: relative;
     z-index: 2;
     padding: 12px 14px;
-    background: linear-gradient(180deg, transparent 0%, rgba(12, 12, 15, 0.92) 100%);
+    background: linear-gradient(180deg, transparent 0%, rgba(12, 12, 15, 0.94) 100%);
     font-size: 0.88rem;
     font-weight: 600;
 }
@@ -782,7 +941,7 @@ button {
     color: var(--text-muted);
 }
 
-/* Download */
+/* Download & Support */
 .download {
     text-align: center;
     padding: clamp(68px, 9vw, 112px) clamp(16px, 4vw, 48px);
@@ -795,26 +954,74 @@ button {
 
 .download > p {
     max-width: 580px;
-    margin: 14px auto 28px;
+    margin: 14px auto 34px;
     color: var(--text-muted);
 }
 
-.download-box {
-    max-width: 540px;
+.download-layout {
+    max-width: 960px;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px;
+    text-align: left;
 }
 
-.download-hint {
-    margin-top: 14px;
-    font-size: 0.86rem;
+.release-card,
+.bug-card {
+    padding: 26px 24px;
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.release-card {
+    border-color: rgba(225, 29, 72, 0.35);
+}
+
+.release-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.release-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+}
+
+.release-badge.outline {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+}
+
+.release-file {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.release-card p,
+.bug-card p {
+    font-size: 0.92rem;
     color: var(--text-muted);
 }
 
 .download-feedback {
-    margin-top: 10px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--accent);
+    font-size: 0.78rem;
+    color: #fb7185;
     min-height: 20px;
 }
 
