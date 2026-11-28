@@ -78,7 +78,7 @@
             <div class="hero-content">
                 <div class="status" role="status">
                     <span class="status-dot" aria-hidden="true"></span>
-                    <span data-i18n="hero_status">САЙТ И ИГРА В РАЗРАБОТКЕ — МОГУТ БЫТЬ БАГИ. ЕСЛИ УВИДИТЕ, НАПИШИТЕ В ПОДДЕРЖКУ. СПАСИБО!</span>
+                    <span data-i18n="hero_status">САЙТ И ИГРА В РАЗРАБОТКЕ — МОГУТ БЫТЬ БАГИ. ЕСЛИ УВИДИТЕ, НАПИШІТЕ В ПОДДЕРЖКУ. СПАСИБО!</span>
                 </div>
 
                 <h1>YOUR WORLD.<br><span>YOUR RULES.</span></h1>
@@ -288,10 +288,8 @@
                         <span class="release-file" data-i18n="bug_card_tag">ПОМОЩЬ РАЗРАБОТКЕ</span>
                     </div>
                     <h3 data-i18n="bug_card_title">Нашли баг?</h3>
-                    <p data-i18n="bug_card_desc">Скопируйте готовый шаблон отчёта об ошибке и отправьте его разработчику — это поможет быстрее исправить баг.</p>
-                    <button type="button" class="btn btn-outline" id="copyBugBtn" data-i18n="bug_btn">
-                        СКОПИРОВАТЬ ШАБЛОН БАГ-РЕПОРТА
-                    </button>
+                    <p data-i18n="bug_card_desc">Перейдите на сайт поддержки напишите ошибку или баг или же идею заполните квитанцию.</p>
+                    <a href="https://darenachek-create.github.io/DareCraft-support/" class="btn btn-outline" id="supportLinkBtn" data-i18n="bug_btn">ПЕРЕЙТИ НА САЙТ ПОДДЕРЖКИ ↗</a>
                     <div class="download-feedback" id="bugFeedback" role="status" aria-live="polite"></div>
                 </div>
             </div>
@@ -375,8 +373,8 @@
                     dl_btn: "ЗАВАНТАЖИТИ DARECRAFT (.ZIP)",
                     bug_card_tag: "ДОПОМОГА РОЗРОБЦІ",
                     bug_card_title: "Знайшли баг?",
-                    bug_card_desc: "Скопіюйте готовий шаблон звіту про помилку та надішліть його розробнику — це допоможе швидше виправити баг.",
-                    bug_btn: "СКОПІЮВАТИ ШАБЛОН БАГ-РЕПОРТУ",
+                    bug_card_desc: "Перейдіть на сайт підтримки, напишіть помилку або баг чи ідею та заповніть квитанцію.",
+                    bug_btn: "ПЕРЕЙТИ НА САЙТ ПІДТРИМКИ ↗",
                     footer_top: "НАГОРУ ↑"
                 },
                 en: {
@@ -446,8 +444,8 @@
                     dl_btn: "DOWNLOAD DARECRAFT (.ZIP)",
                     bug_card_tag: "HELP DEVELOPMENT",
                     bug_card_title: "Found a bug?",
-                    bug_card_desc: "Copy the ready-made bug report template and send it to the developer — it helps us fix issues faster.",
-                    bug_btn: "COPY BUG REPORT TEMPLATE",
+                    bug_card_desc: "Go to the support site, describe an error, bug, or idea, and fill out a ticket.",
+                    bug_btn: "GO TO SUPPORT WEBSITE ↗",
                     footer_top: "BACK TO TOP ↑"
                 },
                 ru: {
@@ -517,14 +515,11 @@
                     dl_btn: "СКАЧАТЬ DARECRAFT (.ZIP)",
                     bug_card_tag: "ПОМОЩЬ РАЗРАБОТКЕ",
                     bug_card_title: "Нашли баг?",
-                    bug_card_desc: "Скопируйте готовый шаблон отчёта об ошибке и отправьте его разработчику — это поможет быстрее исправить баг.",
-                    bug_btn: "СКОПИРОВАТЬ ШАБЛОН БАГ-РЕПОРТУ",
+                    bug_card_desc: "Перейдите на сайт поддержки напишите ошибку или баг или же идею заполните квитанцию.",
+                    bug_btn: "ПЕРЕЙТИ НА САЙТ ПОДДЕРЖКИ ↗",
                     footer_top: "НАВЕРХ ↑"
                 }
             };
-
-            // Исправление опечатки в ru bug_btn
-            TRANSLATIONS.ru.bug_btn = "СКОПИРОВАТЬ ШАБЛОН БАГ-РЕПОРТА";
 
             const langSelect = document.getElementById("lang-select");
             const metaDesc = document.querySelector('meta[name="description"]');
